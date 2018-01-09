@@ -5,11 +5,11 @@
      */
     var defaultVals = {
         'refresh_time': 15000,
-        'default_market': 'bittrex'
+        'default_market': 'coinmarketcap'
     };
 
     var markets = [
-        'bittrex'
+        'coinmarketcap'
     ];
 
     var OptionsPage = {

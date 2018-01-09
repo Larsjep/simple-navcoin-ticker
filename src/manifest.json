@@ -1,12 +1,12 @@
 {
     "manifest_version": 2,
 
-    "name": "Simple Reddcoin Ticker",
-    "description": "This extension shows latest price ticker of popular RDD trading markets.",
+    "name": "Simple NAVCoin Ticker",
+    "description": "This extension shows latest price ticker of popular NAVCoin trading markets.",
     "version": "0.1",
 
     "browser_action": {
-        "default_icon": "images/icon.png"
+        "default_icon": "images/nav-coin.png"
     },
 
     "background": {
@@ -14,5 +14,13 @@
         "page": "background.html"
     },
 
-    "options_page": "options.html"
+    "options_page": "options.html",
+
+    "permissions": [
+        "https://api.coinmarketcap.com/"
+    ],
+
+    "icons": {
+       "128": "images/nav-icon128.png"
+     }
 }

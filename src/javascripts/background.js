@@ -108,11 +108,17 @@
 
         updateLatestInfo: function (price) {
             this.updateBadge(price);
+            this.updateTooltip(price);
         },
 
         updateBadge: function (price) {
             chrome.browserAction.setBadgeText({
                 text: ('' + price).substring(0,6)                
+            });
+        },
+        updateTooltip: function (price) {
+            chrome.browserAction.setTitle({
+                title: 'The current NAVCoin price is : ' + price.toFixed(3) + '$'
             });
         }
     };

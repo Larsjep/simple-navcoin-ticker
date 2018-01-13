@@ -3,7 +3,7 @@
 
     "name": "Simple NAVCoin Ticker",
     "description": "This extension shows latest price ticker of popular NAVCoin trading markets.",
-    "version": "0.1",
+    "version": "0.2",
 
     "browser_action": {
         "default_icon": "images/nav-coin.png"

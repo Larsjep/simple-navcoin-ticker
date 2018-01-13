@@ -10,11 +10,15 @@
     },
 
     "background": {
-        "persistent": true,
-        "page": "background.html"
+        "scripts": [
+            "javascripts/background.js"
+        ]
     },
 
-    "options_page": "options.html",
+    "options_ui": {
+        "page": "options/options.html",
+        "chrome_style": false
+    },
 
     "permissions": [
         "https://api.coinmarketcap.com/"

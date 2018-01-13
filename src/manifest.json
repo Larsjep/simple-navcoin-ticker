@@ -2,6 +2,7 @@
     "manifest_version": 2,
 
     "name": "Simple NAVCoin Ticker",
+    "short_name": "NAVCoin Ticker",
     "description": "This extension shows latest price ticker of popular NAVCoin trading markets.",
     "version": "0.2",
 

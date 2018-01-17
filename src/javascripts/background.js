@@ -41,7 +41,9 @@
         handleSingleRequestResult: function (raw) {
             try {
                 var res = JSON.parse(raw);
-                this.updateLatestInfo(this.getPriceInfo(res));   
+                var price = this.getPrice(res);
+                this.updateBadge(price);
+                this.updateTooltip(price, res);
             } catch (e) {
                 // exception
             }
@@ -78,13 +80,16 @@
             req.send(null);
         },
 
-        getPriceInfo: function (res) {
+        getPrice: function (res) {
+            var price = res[0][markets[config.default_market].key];
+            price = (!price || isNaN(price)) ? 0 : parseFloat(price);
+            return price;
+        },
+
+        updateBadge: function (price) {
             var oldprice = localStorage.price;
 
             var color = "";
-            var price = res[0][markets[config.default_market].key];
-            price = (!price || isNaN(price)) ?
-                0 : parseFloat(price);
             localStorage.price=price;
 
             if(oldprice > price) {
@@ -97,7 +102,9 @@
                 color = {color:[75,75,75,255]};
             }
             chrome.browserAction.setBadgeBackgroundColor(color);
-            return price;
+            chrome.browserAction.setBadgeText({
+                text: ('' + price).substring(0,6)                
+            });
         },
 
         getDescendantProp: function (res, desc) {
@@ -106,20 +113,22 @@
             return res;
         },
 
-        updateLatestInfo: function (price) {
-            this.updateBadge(price);
-            this.updateTooltip(price);
-        },
-
         updateBadge: function (price) {
             chrome.browserAction.setBadgeText({
                 text: ('' + price).substring(0,6)                
             });
         },
-        updateTooltip: function (price) {
-            chrome.browserAction.setTitle({
-                title: 'The current NAVCoin price is : ' + price.toFixed(3) + '$'
-            });
+        updateTooltip: function (price, res) {
+            var title = 'NAVCoin'
+            title += "\nPrice:\t\t" + price.toFixed(3) + '$'
+            title += "\nPrice satoshi:\t" + (parseFloat(res[0]["price_btc"])*100000000).toFixed(0) 
+            title += "\nMarket cap:\t" + parseFloat(res[0]["market_cap_usd"]).toFixed(0) + '$'            
+            title += "\n24h Volume:\t" + parseFloat(res[0]["24h_volume_usd"]).toFixed(0) + '$'
+            title += "\nChange 1 hour:\t" + parseFloat(res[0]["percent_change_1h"]).toFixed(1) + '%'
+            title += "\nChange 24 hours:\t" + parseFloat(res[0]["percent_change_24h"]).toFixed(1) + '%'
+            title += "\nChange 7 days:\t" + parseFloat(res[0]["percent_change_7d"]).toFixed(1) + '%'
+            title += "\nRank\t\t" + res[0]["rank"]
+            chrome.browserAction.setTitle({ title: title });
         }
     };
 

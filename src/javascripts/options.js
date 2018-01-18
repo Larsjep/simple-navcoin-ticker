@@ -5,12 +5,15 @@
      */
     var defaultVals = {
         'refresh_time': 15000,
-        'default_market': 'coinmarketcap'
+        'default_market': 'coinmarketcap',
+        'display_currency': 'usd'
     };
 
     var markets = [
         'coinmarketcap'
     ];
+
+    var supported_currencies = ["AUD", "BRL", "CAD", "CHF", "CLP", "CNY", "CZK", "DKK", "EUR", "GBP", "HKD", "HUF", "IDR", "ILS", "INR", "JPY", "KRW", "MXN", "MYR", "NOK", "NZD", "PHP", "PKR", "PLN", "RUB", "SEK", "SGD", "THB", "TRY", "TWD", "USD", "ZAR"];
 
     var OptionsPage = {
 
@@ -58,6 +61,16 @@
                     elemInput.val(elemVal);
                 }
             }
+           
+            var select = document.getElementById("currency_combo");
+            for(var i = 0; i < supported_currencies.length; i++) {
+                var opt = supported_currencies[i];
+                var el = document.createElement("option");
+                el.textContent = opt;
+                el.value = opt;
+                select.appendChild(el);
+            }
+            select.value = formVals['display_currency'];
         },
 
         /**
@@ -111,6 +124,12 @@
                         dataRangeMin: 1000,
                         dataRangeMax: 3000000,
                         msg: 'You should set the refresh time between 1000ms and 3000000ms. '
+                    },
+                    display_currency: {
+                        required: true,
+                        dataType: 'string',
+                        dataList: supported_currencies,
+                        msg: 'Unsupported currency'
                     }
                 };
 

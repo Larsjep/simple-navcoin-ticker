@@ -5,7 +5,8 @@
      */
     var defaultVals = {
         'refresh_time': 15000,
-        'default_market': 'coinmarketcap'
+        'default_market': 'coinmarketcap',
+        'display_currency': 'usd'
     };
 
     var markets = {
@@ -14,6 +15,12 @@
             key: 'price_usd'
         }
     };
+
+    var curreny_symbols = {
+        DKK: ' kr',
+        USD: '$',
+        EUR: '€'
+    }
 
     var config = {};
 
@@ -74,14 +81,14 @@
 
         handleSingleRequest: function () {
             var req = new XMLHttpRequest(),
-                url = markets[config.default_market].url;
+                url = markets[config.default_market].url + '?convert=' + config.display_currency;
             req.open("GET", url, true);
             req.onreadystatechange = this.ReadyStateChange(req, this, 'handleSingleRequestResult');
             req.send(null);
         },
 
         getPrice: function (res) {
-            var price = res[0][markets[config.default_market].key];
+            var price = res[0]["price_" + config.display_currency.toLowerCase()];
             price = (!price || isNaN(price)) ? 0 : parseFloat(price);
             return price;
         },
@@ -102,9 +109,24 @@
                 color = {color:[75,75,75,255]};
             }
             chrome.browserAction.setBadgeBackgroundColor(color);
-            chrome.browserAction.setBadgeText({
-                text: ('' + price).substring(0,6)                
-            });
+            var floor_price = Math.floor(price);
+            // Get the number of digits the price has
+            var numDigits = Math.floor(Math.log(floor_price) * Math.LOG10E + 1);
+            var badgeText = "";
+            if (numDigits < 4)
+            {
+                badgeText = price.toLocaleString(undefined, {minimumFractionDigits: 4}).substring(0,6)
+            }
+            else if (numDigits == 4)
+            {
+                badgeText = price.toFixed(3).substring(0,6);
+            }
+            else
+            {
+                badgeText = price.toFixed(0).substring(0,3) + '+'
+            }
+            chrome.browserAction.setBadgeText({text: badgeText});
+
         },
 
         getDescendantProp: function (res, desc) {
@@ -113,17 +135,14 @@
             return res;
         },
 
-        updateBadge: function (price) {
-            chrome.browserAction.setBadgeText({
-                text: ('' + price).substring(0,6)                
-            });
-        },
         updateTooltip: function (price, res) {
             var title = 'NAVCoin'
-            title += "\nPrice:\t\t" + price.toFixed(3) + '$'
-            title += "\nPrice satoshi:\t" + (parseFloat(res[0]["price_btc"])*100000000).toFixed(0) 
-            title += "\nMarket cap:\t" + parseFloat(res[0]["market_cap_usd"]).toFixed(0) + '$'            
-            title += "\n24h Volume:\t" + parseFloat(res[0]["24h_volume_usd"]).toFixed(0) + '$'
+            var currency = config.display_currency.toLowerCase();
+            var currency_sym = curreny_symbols[config.display_currency] || ' ' + config.display_currency;
+            title += "\nPrice:\t\t" + price.toLocaleString() + currency_sym
+            title += "\nPrice BTC:\t\t" + (parseFloat(res[0]["price_btc"])*100000000).toFixed(0) + ' satoshi' 
+            title += "\nMarket cap:\t" + parseFloat(res[0]["market_cap_" + currency]).toLocaleString(undefined, {maximumFractionDigits: 0}) + currency_sym
+            title += "\n24h Volume:\t" + parseFloat(res[0]["24h_volume_" + currency]).toLocaleString(undefined, {maximumFractionDigits: 0}) + currency_sym
             title += "\nChange 1 hour:\t" + parseFloat(res[0]["percent_change_1h"]).toFixed(1) + '%'
             title += "\nChange 24 hours:\t" + parseFloat(res[0]["percent_change_24h"]).toFixed(1) + '%'
             title += "\nChange 7 days:\t" + parseFloat(res[0]["percent_change_7d"]).toFixed(1) + '%'

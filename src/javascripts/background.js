@@ -17,9 +17,12 @@
     };
 
     var curreny_symbols = {
+        BRL: ' R$',
         DKK: ' kr',
         USD: '$',
-        EUR: '€'
+        EUR: '€',
+        JPY: '¥',
+        GBP: '£'
     }
 
     var config = {};
